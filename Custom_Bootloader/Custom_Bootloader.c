@@ -14,6 +14,7 @@
 #include "../Peripheral/RCC/RCC.h"
 #include "../Peripheral/USART/USART.h"
 #include "../Peripheral/SystemControlBlock/SCB.h"
+#include "../Peripheral/SysTick/SysTick.h"
 #include "string.h"
 
 /******************************************************************************
@@ -36,8 +37,8 @@ uint32_t num_of_sector9_wrote = 0;
 uint32_t num_of_sector10_wrote = 0;
 uint32_t num_of_sector11_wrote = 0;
 
-Sector_new_FW *sector_new_fw_address = (Sector_new_FW *)FLASH_SECTOR7_START_ADDREESS;
-Sector_crr_FW *sector_crr_fw_address = (Sector_crr_FW *)FALSH_SECTOR2_START_ADDRESS;
+uint32_t *sector_new_fw_address = (volatile uint32_t *)NEW_APPLICATION_START_ADDRESS;
+uint32_t *sector_crr_fw_address = (volatile uint32_t *)CURRENT_APPLICATION_START_ADDRESS;
 
 /**
 *******************************************************************************
@@ -87,6 +88,9 @@ void Bootloader_Init(void)
 * @ Descriptions :
 *		- Jump to application:
 *          + Disable all interrupts
+*          + Clear all pending interrupts
+*          + Disbale Systick timer and reset counter
+*          + Reset all peripheral to default state
 *          + Set main stack pointer to application's stack base address
 *          + Update vector table offset register to point to the application's vector table
 *          + Jump to the application's reset handler
@@ -100,14 +104,29 @@ void JumpToApplication(void)
     // 1. Disable all interrupts
     __disable_irq();
 
-    // 2. Set main stack pointer to application's stack base address
+    // 2. Clear all pending interrupts
+    scb->ICSR |= (1U << 27); // Set PENDSVCLR
+
+    for (uint8_t IRQNumber = 0; IRQNumber < 240; IRQNumber++)
+    {
+        NVIC_ClearPendingInterrupt(IRQNumber);
+    }
+
+    // 3. Disbale Systick timer and reset counter
+    SysTickSettingEnableCounter(DISABLE);
+    InitSystemTimer();
+
+    // 4. Reset all peripheral to default state
+    PeripheralInitialization(); // Initialize all peripherals to default state (GPIO, USART, etc.)
+
+    // 5. Set main stack pointer to application's stack base address
     uint32_t app_stack_pointer = *((volatile uint32_t*)CURRENT_APPLICATION_START_ADDRESS);
     __set_MSP(app_stack_pointer);
 
-    // 3. Update vector table offset register to point to the application's vector table
+    // 6. Update vector table offset register to point to the application's vector table
     scb->VTOR = CURRENT_APPLICATION_START_ADDRESS;
 
-    // 4. Jump to the application's reset handler
+    // 7. Jump to the application's reset handler
     void (*app_reset_handler)(void);
     app_reset_handler = (void (*)(void))(*((volatile uint32_t*)(CURRENT_APPLICATION_START_ADDRESS + 4)));
     app_reset_handler();
@@ -128,52 +147,16 @@ void JumpToApplication(void)
 */
 void GetDataWriterAndLoadIntoNewFwFlash(void)
 {
-    uint32_t data_received;
+    uint8_t data_received;
 
-    Sector_new_FW *sector_new_fw_address = (Sector_new_FW *)FLASH_SECTOR7_START_ADDREESS;
+    uint32_t *sector_new_fw_address = (uint32_t *)NEW_APPLICATION_START_ADDRESS;
 
-    if (num_of_sector7_wrote < 131072)
+    uint32_t size_new_firmware = SIZE_OF_NEW_FW_FLASH;
+    while (size_new_firmware > 0)
     {
         data_received = USART_ReceiveData(usart2);
-        sector_new_fw_address->Sector7[num_of_sector7_wrote] = data_received;
-        num_of_sector7_wrote++;
-    }
-
-    if (num_of_sector7_wrote >= 131072 && num_of_sector8_wrote < 131072)
-    {
-        num_of_sector7_wrote = 131073;
-        data_received = USART_ReceiveData(usart2);
-        sector_new_fw_address->Sector8[num_of_sector8_wrote] = data_received;
-        num_of_sector8_wrote++;
-    }
-
-    if (num_of_sector8_wrote >= 131072 && num_of_sector9_wrote < 131072)
-    {
-        num_of_sector8_wrote = 131073;
-        data_received = USART_ReceiveData(usart2);
-        sector_new_fw_address->Sector9[num_of_sector9_wrote] = data_received;
-        num_of_sector9_wrote++;
-    }
-
-    if (num_of_sector9_wrote >= 131072 && num_of_sector10_wrote < 131072)
-    {
-        num_of_sector9_wrote = 131073;
-        data_received = USART_ReceiveData(usart2);
-        sector_new_fw_address->Sector10[num_of_sector10_wrote] = data_received;
-        num_of_sector10_wrote++;
-    }
-
-    if (num_of_sector10_wrote >= 131072 && num_of_sector11_wrote < 131072)
-    {
-        num_of_sector10_wrote = 131073;
-        data_received = USART_ReceiveData(usart2);
-        sector_new_fw_address->Sector11[num_of_sector11_wrote] = data_received;
-        num_of_sector11_wrote++;
-    }
-
-    if (num_of_sector11_wrote >= 131072)
-    {
-        num_of_sector11_wrote = 131073;
+        memset(sector_new_fw_address, data_received, sizeof(data_received));
+        size_new_firmware--;
     }
 }
 
@@ -232,8 +215,8 @@ bool CRCCheckingFirmware(void)
     bool CRCMatched = false;
 
     // Calculate CRC of new FW from sector 7 - 11 and crr FW from sector 2 - 6
-    uint32_t crc_new_fw = CalculateCRC32((const uint8_t *)&sector_new_fw_address->Sector7[0], sizeof(sector_new_fw_address->Sector7) + sizeof(sector_new_fw_address->Sector8) + sizeof(sector_new_fw_address->Sector9) + sizeof(sector_new_fw_address->Sector10) + sizeof(sector_new_fw_address->Sector11));
-    uint32_t crc_crr_fw = CalculateCRC32((const uint8_t *)&sector_crr_fw_address->Sector2[0], sizeof(sector_crr_fw_address->Sector2) + sizeof(sector_crr_fw_address->Sector3) + sizeof(sector_crr_fw_address->Sector4) + sizeof(sector_crr_fw_address->Sector5) + sizeof(sector_crr_fw_address->Sector6));
+    uint32_t crc_new_fw = CalculateCRC32((const uint8_t *)&sector_new_fw_address, SIZE_OF_NEW_FW_FLASH);
+    uint32_t crc_crr_fw = CalculateCRC32((const uint8_t *)&sector_crr_fw_address, SIZE_OF_CURRENT_FW_FLASH);
 
     // Comparision
     if (crc_new_fw == crc_crr_fw)
@@ -259,53 +242,7 @@ bool CRCCheckingFirmware(void)
 */
 void EarseNewFirmwareSector(void)
 {
-    uint32_t sector_new_fw = 0;
-
-    for (sector_new_fw = 0; sector_new_fw < 131072; sector_new_fw++)
-    {
-        sector_new_fw_address->Sector7[sector_new_fw] = 0xF;
-        sector_new_fw_address->Sector8[sector_new_fw] = 0xF;
-        sector_new_fw_address->Sector9[sector_new_fw] = 0xF;
-        sector_new_fw_address->Sector10[sector_new_fw] = 0xF;
-        sector_new_fw_address->Sector11[sector_new_fw] = 0xF;
-    }
-}
-
-/**
-*******************************************************************************
-* @ Name : EarseCurrentFirmwareSector()
-* @ Parameters: void
-* @ Registers :
-* @ Descriptions :
-*		- Earse all sectors of current firmware (sector 2 - 6) by writing 0xF to all bytes
-*         + Each sector has 16384 bytes for sector 2 - 3 and 65536 bytes for sector 4 and 131072 bytes for sector 5 - 6
-* @ Return value : void
-* @ author : Nguyen Dinh Thuan(thuan.nd.167@gmail.com)
-* @ date : 2025-04-21
-*******************************************************************************
-*/
-void EarseCurrentFirmwareSector(void)
-{
-    uint16_t sector2_3_index = 0;
-    uint32_t sector4_index = 0;
-    uint32_t sector5_6_index = 0;
-
-    for (sector2_3_index = 0; sector2_3_index < 16384; sector2_3_index++)
-    {
-        sector_crr_fw_address->Sector2[sector2_3_index] = 0xF;
-        sector_crr_fw_address->Sector3[sector2_3_index] = 0xF;
-    }
-
-    for (sector4_index = 0; sector4_index < 65536; sector4_index++)
-    {
-        sector_crr_fw_address->Sector4[sector4_index] = 0xF;
-    }
-
-    for (sector5_6_index = 0; sector5_6_index < 131072; sector5_6_index++)
-    {
-        sector_crr_fw_address->Sector5[sector5_6_index] = 0xF;
-        sector_crr_fw_address->Sector6[sector5_6_index] = 0xF;
-    }
+    memset(sector_new_fw_address, 0xF, SIZE_OF_NEW_FW_FLASH);
 }
 
 /**
@@ -318,7 +255,7 @@ void EarseCurrentFirmwareSector(void)
 *          + Earse all sectors of new firmware (sector 7 - 11)
 *          + Receive data from writer and write to Flash memory from Sector 7
 *          + Check CRC of new firmware with current firmware in Sector2
-*          + If CRC is different, turn on CRC Check LED and earse current firmware in Sector2 - 6 and copy new firmware from Sector7 - 11 to Sector2 - 6
+*          + If CRC is different, turn on CRC Check LED and swap bank flash memory to write new firmware to sector 2 - 6 from new firmware on sector 7 - 11
 *          + Jump to current application
 *          + If CRC is same, turn on Error Check LED and jump to current application (do not update)
 * @ Return value : void
@@ -340,11 +277,8 @@ void New_Firmware_Update(void)
         // Turn on CRC Check LED -> diffent FW -> update
         GPIO_SettingOutputDataBSRR(gpio_A_bl, GPIO_PIN1, SET);
 
-        // Earse current firmware in Sector2 - 6
-        EarseCurrentFirmwareSector();
-
-        // Copy new firmware from Sector7 - 11 to Sector2 - 6
-        memcpy(sector_crr_fw_address, sector_new_fw_address, sizeof(Sector_new_FW));
+        // Swap bank flash memory to write new firmware to sector 2 - 6 from new firmware on sector 7 - 11
+        SwapBankFlashMemory(sector_crr_fw_address, sector_new_fw_address);
 
         // Jump to current application
         JumpToApplication();

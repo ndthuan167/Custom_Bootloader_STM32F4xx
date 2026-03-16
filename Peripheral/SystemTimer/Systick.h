@@ -58,14 +58,14 @@ enum
 #define     ENABLE             1
 #define     DISABLE            0
 
-#define SYST_CSR_SET_ENABLE(SysTick)                SysTick->SYST_CSR |= (1 << CSR_ENABLE)
-#define SYST_CSR_CLEAR_ENABLE(SysTick)              SysTick->SYST_CSR &= ~(1 << CSR_ENABLE)
+#define SYST_CSR_SET_ENABLE(SysTick)                SysTick->SYST_CSR |= (1U << CSR_ENABLE)
+#define SYST_CSR_CLEAR_ENABLE(SysTick)              SysTick->SYST_CSR &= ~(1U << CSR_ENABLE)
 
-#define SYST_CSR_ENABLE_INTERRUPT(SysTick)          SysTick->SYST_CSR |= (1 << CSR_TICKINT)
-#define SYST_CSR_DISABLE_INTERRUPT(SysTick)         SysTick->SYST_CSR &= ~(1 << CSR_TICKINT)
+#define SYST_CSR_ENABLE_INTERRUPT(SysTick)          SysTick->SYST_CSR |= (1U << CSR_TICKINT)
+#define SYST_CSR_DISABLE_INTERRUPT(SysTick)         SysTick->SYST_CSR &= ~(1U << CSR_TICKINT)
 
-#define SYST_CSR_SELECT_PROCESSOR_CLKSRC(SysTick)   SysTick->SYST_CSR |= (1 << CSR_CLKSOURCE)
-#define SYST_CSR_SELECT_EXTERNAL_CLKSRC(SysTick)    SysTick->SYST_CSR &= ~(1 << CSR_CLKSOURCE)
+#define SYST_CSR_SELECT_PROCESSOR_CLKSRC(SysTick)   SysTick->SYST_CSR |= (1U << CSR_CLKSOURCE)
+#define SYST_CSR_SELECT_EXTERNAL_CLKSRC(SysTick)    SysTick->SYST_CSR &= ~(1U << CSR_CLKSOURCE)
 
 #define PROCESSOR_CLKSRC        1
 #define EXTERNAL_CLKSRC         0

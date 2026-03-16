@@ -216,10 +216,10 @@ enum
 #define 	OFF		0
 
 // When config HSE
-#define PWR_SET_VOS_1MODE(_PWR, VOS)	_PWR->CR |= (1 << 14)
+#define PWR_SET_VOS_1MODE(_PWR, VOS)	_PWR->CR |= (1U << 14)
 
 // Config Flash to support high speed clock (72MHz) -> Enable Prefetch Buffer, Instruction Cache, Data Cache and Latency 1 wait state.
-#define FLASH_CONFIG_FOR_CLOCK(_FLASH)	_FLASH->ACR |= (1 << 8) | (1 << 9) | (1 << 10) | (1 << 0)
+#define FLASH_CONFIG_FOR_CLOCK(_FLASH)	_FLASH->ACR |= (1U << 8) | (1U << 9) | (1U << 10) | (1U << 0)
 
 
 /*******************************************************************************
@@ -229,27 +229,27 @@ enum
 #define RCC_SET_HSI(_RCC, OnOff) 		\
 		do { 							\
 			if (OnOff == ON) { 			\
-				_RCC->CR |= (1 << 0); 	\
+				_RCC->CR |= (1U << 0); 	\
 			} else if (OnOff == OFF) { 	\
-				_RCC->CR &= ~(1 << 0); 	\
+				_RCC->CR &= ~(1U << 0); 	\
 			} 							\
 		} while (0)
 
-#define RCC_GET_HSI(_RCC) 		((_RCC->CR & (1 << 0)) ? ON : OFF)
-#define RCC_GET_HSIRDY(_RCC)	((_RCC->CR & (1 << 1)) ? ON : OFF)
+#define RCC_GET_HSI(_RCC) 		((_RCC->CR & (1U << 0)) ? ON : OFF)
+#define RCC_GET_HSIRDY(_RCC)	((_RCC->CR & (1U << 1)) ? ON : OFF)
 
 // HSE Config
 #define RCC_SET_HSE(_RCC, OnOff)			\
 		do {								\
 			if(OnOff == ON) {				\
-				_RCC-> CR |= (1 << 16);		\
+				_RCC-> CR |= (1U << 16);		\
 			} else if(OnOff == OFF) {		\
-				_RCC->CR &= ~ (1 << 16);	\
+				_RCC->CR &= ~ (1U << 16);	\
 			}								\
 		} while(0)
 
-#define RCC_GET_HSE(_RCC)				((_RCC-> CR & (1 << 16)) ? ON : OFF)
-#define RCC_GET_HSERDY(_RCC)			((_RCC-> CR & (1 << 17)) ? ON : OFF)
+#define RCC_GET_HSE(_RCC)				((_RCC-> CR & (1U << 16)) ? ON : OFF)
+#define RCC_GET_HSERDY(_RCC)			((_RCC-> CR & (1U << 17)) ? ON : OFF)
 
 
 enum
@@ -262,34 +262,34 @@ enum
 #define RCC_SET_HSEBYP(_RCC, OnOff)			\
 		do { 								\
 			if (OnOff == ON) { 				\
-				_RCC->CR |= (1 << 18); 		\
+				_RCC->CR |= (1U << 18); 		\
 			} else if (OnOff == OFF) { 		\
-				_RCC->CR &= ~(1 << 18); 	\
+				_RCC->CR &= ~(1U << 18); 	\
 			} 								\
 		} while (0)
 
-#define RCC_GET_HSEBYP(_RCC)			((_RCC-> CR & (1 << 18)) ? ON : OFF)
+#define RCC_GET_HSEBYP(_RCC)			((_RCC-> CR & (1U << 18)) ? ON : OFF)
 
 // CSS (Clock Security System -> Active another lock automaticaly in case main clock not work or not stable)
 #define RCC_SET_CSSON(_RCC, OnOff)			\
 		do { 								\
 			if (OnOff == ON) { 				\
-				_RCC->CR |= (1 << 19); 		\
+				_RCC->CR |= (1U << 19); 		\
 			} else if (OnOff == OFF) { 		\
-				_RCC->CR &= ~(1 << 19); 	\
+				_RCC->CR &= ~(1U << 19); 	\
 			} 								\
 		} while (0)
 
-#define RCC_GET_CSSON(_RCC)				((_RCC-> CR & (1 << 19)) ? ON : OFF)
+#define RCC_GET_CSSON(_RCC)				((_RCC-> CR & (1U << 19)) ? ON : OFF)
 
 // PLL (Main PLL clock enable/Disble)
 
-#define RCC_SET_PLLON(_RCC)				_RCC->CR |= (1 << 24)
-#define RCC_GET_PLLRDY(_RCC)			((_RCC-> CR & (1 << 25)) ? ON : OFF)
+#define RCC_SET_PLLON(_RCC)				_RCC->CR |= (1U << 24)
+#define RCC_GET_PLLRDY(_RCC)			((_RCC-> CR & (1U << 25)) ? ON : OFF)
 
 // PLLI2S (PLL for I2 enable/disable)
-#define RCC_SET_PLLI2S(_RCC)			_RCC->CR |= (1 << 26)
-#define RCC_GET_PLLI2SRDY(_RCC)			((_RCC-> CR & (1 << 27)) ? ON : OFF)
+#define RCC_SET_PLLI2S(_RCC)			_RCC->CR |= (1U << 26)
+#define RCC_GET_PLLI2SRDY(_RCC)			((_RCC-> CR & (1U << 27)) ? ON : OFF)
 
 
 /*******************************************************************************
@@ -307,13 +307,13 @@ enum
 #define RCC_SELECT_PLLSRC(_RCC, pll_src)			\
 		do{											\
 			if(pll_src == PLL_HSE_SOURCE){			\
-				_RCC->PLLCFGR |= (1 << 22);			\
+				_RCC->PLLCFGR |= (1U << 22);			\
 			} else if (pll_src == PLL_HSI_SOURCE){	\
-				_RCC->PLLCFGR &= ~(1 << 22);		\
+				_RCC->PLLCFGR &= ~(1U << 22);		\
 			}										\
 		}while (0);
 
-#define RCC_GET_PLLSRC_SELECTION(_RCC)		((_RCC-> PLLCFGR & (1 << 2)) ? ON : OFF)
+#define RCC_GET_PLLSRC_SELECTION(_RCC)		((_RCC-> PLLCFGR & (1U << 2)) ? ON : OFF)
 
 /*******************************************************************************
  * CPGR REGISTERS DEFINITION

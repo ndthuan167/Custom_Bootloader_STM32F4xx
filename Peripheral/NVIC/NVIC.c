@@ -138,7 +138,7 @@ uint8_t NVIC_GetStatusInterrupt(uint8_t IRQNumber, uint8_t register_read)
         default:
             break;
         }
-        value = (u32InterruptStatus & (1 << (IRQNumber % 32 - 1)));
+        value = (u32InterruptStatus & (1U << (IRQNumber % 32 - 1)));
         value = value >> ((IRQNumber % 32 - 1));
         return value;
     }

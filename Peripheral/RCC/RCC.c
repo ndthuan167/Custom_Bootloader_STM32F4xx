@@ -329,21 +329,21 @@ void RCC_EnablePeripheralClock(uint8_t Peripheral)
     if (Peripheral < CLOCK_TIM2)
     {
         value = RCC_GET_AHB1ENR(_RCC);
-        value |= (1 << Peripheral);
+        value |= (1U << Peripheral);
 
         RCC_SET_AHB1ENR(_RCC,value);
     }
     else if (Peripheral < CLOCK_TIM1)
     {
         value = RCC_GET_APB1ENR(_RCC);
-        value |= (1 << (Peripheral - CLOCK_TIM2));
+        value |= (1U << (Peripheral - CLOCK_TIM2));
 
         RCC_SET_APB1ENR(_RCC, value);
     }
     else
     {
         value = RCC_GET_APB2ENR(_RCC);
-        value |= (1 << (Peripheral - CLOCK_TIM1));
+        value |= (1U << (Peripheral - CLOCK_TIM1));
 
         RCC_SET_APB2ENR(_RCC, value);
     }

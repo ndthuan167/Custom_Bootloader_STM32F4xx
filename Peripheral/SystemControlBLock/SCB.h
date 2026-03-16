@@ -68,9 +68,9 @@ enum
  * SCB_ICSR (Interrupt Control and State register) REGISTERS DEFINITION
  *******************************************************************************/
 
-#define SCB_SET_SYSTICK_PENDING(_SCB)               _SCB->ICSR |= (1 << PENDSTSET)
-#define SCB_GET_SYSTICK_PENDING(_SCB)               (_SCB->ICSR & (1 << PENDSTSET)) >> PENDSTSET
-#define SCB_CLEAR_SYSTICK_PENDING(_SCB)              _SCB->ICSR |= (1 << PENDSTCLR)
+#define SCB_SET_SYSTICK_PENDING(_SCB)               _SCB->ICSR |= (1U << PENDSTSET)
+#define SCB_GET_SYSTICK_PENDING(_SCB)               (_SCB->ICSR & (1U << PENDSTSET)) >> PENDSTSET
+#define SCB_CLEAR_SYSTICK_PENDING(_SCB)              _SCB->ICSR |= (1U << PENDSTCLR)
 
 /*******************************************************************************
  * SCB_SHPR3(System Handler Priority Register 3) REGISTERS DEFINITION

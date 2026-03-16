@@ -69,7 +69,7 @@ uint8_t SysTickGetCountFlag(void)
 {
     uint8_t u8CountFlag;
     uint32_t u32CSRValue = SYST_CSR_GET_COUNTFLAG(systick);
-    u8CountFlag = (u32CSRValue & (1 << CSR_COUNTFLAG)) >> CSR_COUNTFLAG;
+    u8CountFlag = (u32CSRValue & (1U << CSR_COUNTFLAG)) >> CSR_COUNTFLAG;
 
     return u8CountFlag;
 }

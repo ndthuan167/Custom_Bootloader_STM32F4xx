@@ -100,7 +100,7 @@ void EXTI_SettingMaskInterrupt(uint8_t EXTI_line, uint8_t mask)
 */
 uint8_t EXTI_GetValueMaskInterrupt(uint8_t EXTI_line)
 {
-    return (EXTI_GET_IMR(_EXTI, EXTI_line) & (1 << EXTI_line)) >> (EXTI_line);
+    return (EXTI_GET_IMR(_EXTI, EXTI_line) & (1U << EXTI_line)) >> (EXTI_line);
 }
 
 /**
@@ -137,7 +137,7 @@ void EXTI_SettingMaskEventRequest(uint8_t EXTI_line, uint8_t mask)
 */
 uint8_t EXTI_GetValueMaskEventRequest(uint8_t EXTI_line)
 {
-    return (EXTI_GET_EMR(_EXTI, EXTI_line) & (1 << EXTI_line)) >> (EXTI_line);
+    return (EXTI_GET_EMR(_EXTI, EXTI_line) & (1U << EXTI_line)) >> (EXTI_line);
 }
 
 /**
@@ -226,7 +226,7 @@ void EXTI_ClearFlagInterruptInLine(uint8_t EXTI_line)
 */
 uint8_t EXTI_GetFlagInterruptStatus(uint8_t EXTI_line)
 {
-    return (EXTI_GET_PR(_EXTI, EXTI_line) & (1 << EXTI_line)) >> (EXTI_line);
+    return (EXTI_GET_PR(_EXTI, EXTI_line) & (1U << EXTI_line)) >> (EXTI_line);
 }
 
 /**
@@ -246,9 +246,9 @@ uint8_t EXTI_GetFlagInterruptStatus(uint8_t EXTI_line)
 uint8_t EXTI_GetTriggerStatus(uint8_t EXTI_line, uint8_t trigger_type)
 {
     if (trigger_type == RISING_TRIGGER)
-        return (EXTI_GET_RTSR(_EXTI, EXTI_line) & (1 << EXTI_line)) >> EXTI_line;
+        return (EXTI_GET_RTSR(_EXTI, EXTI_line) & (1U << EXTI_line)) >> EXTI_line;
     else
-        return (EXTI_GET_FTSR(_EXTI, EXTI_line) & (1 << EXTI_line)) >> EXTI_line;
+        return (EXTI_GET_FTSR(_EXTI, EXTI_line) & (1U << EXTI_line)) >> EXTI_line;
 }
 
 /******************************************************************************

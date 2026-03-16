@@ -152,13 +152,13 @@ enum
  * EXTI_SWIER REGISTERS DEFINITION
  *******************************************************************************/
 
-#define EXTI_SET_SWIER(EXTI, EXTI_LineX)        EXTI->EXTI_SWIER |= (1 << EXTI_LineX)
+#define EXTI_SET_SWIER(EXTI, EXTI_LineX)        EXTI->EXTI_SWIER |= (1U << EXTI_LineX)
 
 /*******************************************************************************
  * EXTI_PR REGISTERS DEFINITION
  *******************************************************************************/
 
-#define EXTI_SET_PR(EXTI, EXTI_LineX)           EXTI->EXTI_PR |= (1 << EXTI_LineX)
+#define EXTI_SET_PR(EXTI, EXTI_LineX)           EXTI->EXTI_PR |= (1U << EXTI_LineX)
 #define EXTI_GET_PR(EXTI, EXTI_LineX)           EXTI->EXTI_PR
 
 /*******************************************************************************

@@ -143,35 +143,35 @@ enum
  * NVIC_ISER REGISTERS DEFINITION
  *******************************************************************************/
 
-#define NVIC_SET_ENABLE_INTERRUPT(NVIC, IRQNumber)                  NVIC->NVIC_ISER[IRQNumber / 32] |= 1 << (IRQNumber % 32)
+#define NVIC_SET_ENABLE_INTERRUPT(NVIC, IRQNumber)                  NVIC->NVIC_ISER[IRQNumber / 32] |= 1U << (IRQNumber % 32)
 #define NVIC_GET_STATUS_ENABLE_INTERRUPT(NVIC, IRQNumber)           NVIC->NVIC_ISER[IRQNumber / 32]
 
 /*******************************************************************************
  * NVIC_ICER REGISTERS DEFINITION
  *******************************************************************************/
 
-#define NVIC_SET_CLEAR_ENABLE_INTERRUPT(NVIC, IRQNumber)            NVIC->NVIC_ICER[IRQNumber / 32] |= 1 << (IRQNumber % 32)
+#define NVIC_SET_CLEAR_ENABLE_INTERRUPT(NVIC, IRQNumber)            NVIC->NVIC_ICER[IRQNumber / 32] |= 1U << (IRQNumber % 32)
 #define NVIC_GET_STATUS_CLEAR_INTERRUPT(NVIC, IRQNumber)            NVIC->NVIC_ICER[IRQNumber / 32]
 
 /*******************************************************************************
  * NVIC_ISPR REGISTERS DEFINITION   
  *******************************************************************************/
 
-#define NVIC_SET_PENDING_INTERRUPT(NVIC, IRQNumber)                 NVIC->NVIC_ISPR[IRQNumber / 32] |= 1 << (IRQNumber % 32)
+#define NVIC_SET_PENDING_INTERRUPT(NVIC, IRQNumber)                 NVIC->NVIC_ISPR[IRQNumber / 32] |= 1U << (IRQNumber % 32)
 #define NIVC_GET_STATUS_PENDING_INTERRUPT(NVIC, IRQNumber)          NVIC->NVIC_ISPR[IRQNumber / 32]
 
 /*******************************************************************************
  * NVIC_ICPR REGISTERS DEFINITION
  *******************************************************************************/
 
-#define NVIC_CLEAR_PENDING_INTERRUPT(NVIC, IRQNumber)               NVIC->NVIC_ICPR[IRQNumber / 32] |= 1 << (IRQNumber % 32)
+#define NVIC_CLEAR_PENDING_INTERRUPT(NVIC, IRQNumber)               NVIC->NVIC_ICPR[IRQNumber / 32] |= 1U << (IRQNumber % 32)
 #define NVIC_GET_STATUS_CLEAR_PENDING_INTERRUPT(NVIC, IRQNumber)    NVIC->NVIC_ICPR[IRQNumber / 32]
 
 /*******************************************************************************
  * NVIC_IABR REGISTERS DEFINITION
  *******************************************************************************/
 
-#define NVIC_SET_ACTIVE_INTERRUPT(NVIC, IRQNumber)                  NVIC->NVIC_IABR[IRQNumber / 32] |= 1 << (IRQNumber % 32)
+#define NVIC_SET_ACTIVE_INTERRUPT(NVIC, IRQNumber)                  NVIC->NVIC_IABR[IRQNumber / 32] |= 1U << (IRQNumber % 32)
 #define NVIC_GET_STATUS_ACTIVE_INTERRUPT(NVIC, IRQNumber)           NVIC->NVIC_IABR[IRQNumber / 32]
 
 /*******************************************************************************

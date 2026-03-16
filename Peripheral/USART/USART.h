@@ -54,14 +54,14 @@ typedef struct {
 
 #define DATA_RECEIVED       1
 #define DATA_NOT_RECEIVED   0
-#define USART_CLEAR_READDATA_FLAG(usartn)       (usartn->SR) &= ~(1 << 5)
-#define USART_GET_READDATA_STATUS(usart)        (usart->SR & (1 << 5))
+#define USART_CLEAR_READDATA_FLAG(usartn)       (usartn->SR) &= ~(1U << 5)
+#define USART_GET_READDATA_STATUS(usart)        (usart->SR & (1U << 5))
 
 
 #define DATA_TRANSMITTED    1
 #define DATA_NOT_TRANSMITTED 0
-#define USART_CLEAR_WRITEDATA_FLAG(usartn)       (usartn->SR) &= ~(1 << 7)
-#define USART_GET_WRITEDATA_STATUS(usart)       (usart->SR & (1 << 7))
+#define USART_CLEAR_WRITEDATA_FLAG(usartn)       (usartn->SR) &= ~(1U << 7)
+#define USART_GET_WRITEDATA_STATUS(usart)       (usart->SR & (1U << 7))
 
 /*******************************************************************************
 * DR REGISTERS DEFINITION

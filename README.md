@@ -42,12 +42,12 @@ After definition space for each part. Make the method to check and update new FW
 ```
 
 2. Checking and Update new firmware function:
-   + Earse all sectors of new firmware (sector 7 - 11)
-   + Receive data from writer and write to Flash memory from Sector 7
-   + Check CRC of new firmware with current firmware in Sector2
-   + If CRC is different, turn on CRC Check LED and earse current firmware in Sector2 - 6 and copy new firmware from Sector7 - 11 to Sector2 - 6
-   + Jump to current application
-   + If CRC is same, turn on Error Check LED and jump to current application (do not update)
+    + Earse all sectors of new firmware (sector 7 - 11)
+    + Receive data from writer and write to Flash memory from Sector 7
+    + Check CRC of new firmware with current firmware in Sector2
+    + If CRC is different, turn on CRC Check LED and swap bank flash memory to write new firmware to sector 2 - 6 from new firmware on sector 7 - 11
+    + Jump to current application
+    + If CRC is same, turn on Error Check LED and jump to current application (do not update)
 
 ```c
 void New_Firmware_Update(void)
@@ -64,11 +64,8 @@ void New_Firmware_Update(void)
         // Turn on CRC Check LED -> diffent FW -> update
         GPIO_SettingOutputDataBSRR(gpio_A_bl, GPIO_PIN1, SET);
 
-        // Earse current firmware in Sector2 - 6
-        EarseCurrentFirmwareSector();
-
-        // Copy new firmware from Sector7 - 11 to Sector2 - 6
-        memcpy(sector_crr_fw_address, sector_new_fw_address, sizeof(Sector_new_FW));
+        // Swap bank flash memory to write new firmware to sector 2 - 6 from new firmware on sector 7 - 11
+        SwapBankFlashMemory(sector_crr_fw_address, sector_new_fw_address);
 
         // Jump to current application
         JumpToApplication();

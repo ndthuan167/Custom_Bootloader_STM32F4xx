@@ -27,6 +27,10 @@ int main()
 		{
 			firmware_update_time_waiting++;
 		}
+		
+		/* This is an example, in fact with single MCU,
+		we can check with a special flag value in flash memory to determine whether to jump to application or update new firmware.
+		special flag was stored in EEPROM or a specific address in flash memory by Writer after writing new firmware to flash memory*/
 
 		if (firmware_update_time_waiting >= FIRMWARE_UPDATE_TIME_WAITING)
 		{
